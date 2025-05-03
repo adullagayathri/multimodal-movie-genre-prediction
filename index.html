@@ -61,7 +61,7 @@
       <h3>Dataset Description</h3>
       <h4>Data Source</h4>
       <p>Movie metadata was collected from the TMDb API. This included movie titles, overviews, genres, and poster paths. The data extraction process used multithreading to efficiently fetch and store metadata.</p>
-      <img src = "/Users/gayathri/Desktop/Img-1.png" alt = "output image before Cleaning" width = "500" height="333">
+      <img src = "images/Img-1.png" alt = "output image before Cleaning" width = "500" height="333">
       <h4>Image Data Extraction</h4>
       <p>Poster images were retrieved by combining each movie's <code>poster_path</code> with the base URL (<code>https://image.tmdb.org/t/p/w500/</code>). Posters were downloaded using Python’s <code>requests</code> and <code>PIL</code>. Faulty or missing URLs were filtered out. Verification steps included:</p>
       <ol>
@@ -71,7 +71,7 @@
 
         <li>Removing entries with missing or broken image links</li>
       </ol>
-      <img src = "/Users/gayathri/Desktop/img-2.png" alt = "output image before Cleaning" width = "500" height="375">
+      <img src = "images/img-2.png" alt = "output image before Cleaning" width = "500" height="375">
     
       <h4>Data Cleaning</h4>
       <ol>
@@ -83,30 +83,30 @@
 
         <li>Final dataset: ~30,016 samples with text and image metadata</li>
       </ol>
-      <img src = "/Users/gayathri/Desktop/img-3.png" alt = "output image before Cleaning" width = "500" height="375">
+      <img src = "images/img-3.png" alt = "output image before Cleaning" width = "500" height="375">
     
       <h3>Exploratory Data Analysis (EDA)</h3>
       <ol>
         <li><strong>Genre Distribution:</strong> Drama, Comedy, and Action were most frequent. Rare genres like War and Western were underrepresented.</li>
-        <img src = "/Users/gayathri/Desktop/img-4.png" alt = "output image before Cleaning" width = "600" height="375">
+        <img src = "images/img-4.png" alt = "output image before Cleaning" width = "600" height="375">
         <li><strong>Additional Taglines and Posters:</strong> Downloaded extra metadata to strengthen representation of rare genres.</li>
-        <img src = "/Users/gayathri/Desktop/4.png" alt = "output image before Cleaning" width = "800" height="375">
+        <img src = "images/4.png" alt = "output image before Cleaning" width = "800" height="375">
         
         <li><strong>Genre Cleanup and Consolidation:</strong> Merged overlapping or rare genres into a new “Others” category.</li>
-        <img src = "/Users/gayathri/Desktop/2.png" alt = "output image before Cleaning" width = "500" height="375">
+        <img src = "images/2.png" alt = "output image before Cleaning" width = "500" height="375">
         
         <li><strong>Genre Co-occurrence Network:</strong> Created graph connecting genres by their co-occurrence. Weakly connected genres were merged or dropped.</li>
         <div class="before-after">
-          <img src="/Users/gayathri/Desktop/1.png" alt="Before Cleaning" class="before-img">
+          <img src="images/1.png" alt="Before Cleaning" class="before-img">
           <span class="arrow">→</span>
-          <img src="/Users/gayathri/Desktop/img-5.png" alt="After Cleaning" class="after-img">
+          <img src="images/img-5.png" alt="After Cleaning" class="after-img">
         </div>
         <li><strong>Heatmap Visualization:</strong> A co-occurrence heatmap supported network analysis and guided genre reduction.</li>
-        <img src = "/Users/gayathri/Desktop/img-6.png" alt = "output image before Cleaning" width = "500" height="375">
+        <img src = "images/img-6.png" alt = "output image before Cleaning" width = "500" height="375">
         <li><strong>Multi-Label Analysis:</strong> PCA was performed to see distribution</li>
-        <img src = "/Users/gayathri/Desktop/2.png" alt = "output image before Cleaning" width = "500" height="375">
+        <img src = "images/2.png" alt = "output image before Cleaning" width = "500" height="375">
         <li><strong>Overview Text Length:</strong> Overviews typically ranged from 30 to 150 words. Very short/long ones were reviewed.</li>
-        <img src = "/Users/gayathri/Desktop/img-7.png" alt = "output image before Cleaning" width = "500" height="375">
+        <img src = "images/img-7.png" alt = "output image before Cleaning" width = "500" height="375">
       </ol>
       <section id="handling-imbalance">
         <h2>Handling Data Imbalance</h2>
@@ -150,7 +150,7 @@
       <p>
         final shape after binarization was : <strong>(21554, 18)</strong> 
       </p>
-      <img src = "/Users/gayathri/Desktop/5.png" alt = "output image before Cleaning" width = "800" height="375">
+      <img src = "images/5.png" alt = "output image before Cleaning" width = "800" height="375">
       <p>
         Additionally, this binarized format helped us:
         <ul>
@@ -190,7 +190,7 @@
           <li><strong>Scheduler:</strong> CosineAnnealingLR</li>
           <li><strong>Threshold:</strong> Initially 0.5, later tuned per-genre between 0.1–0.9</li>
         </ul>
-        <img src = "/Users/gayathri/Desktop/6.png" alt = "output image before Cleaning" width = "800" height="375">
+        <img src = "images/6.png" alt = "output image before Cleaning" width = "800" height="375">
       </p>
     
       <p><strong>Improvements Over Time:</strong>
@@ -203,7 +203,7 @@
           <li><strong>Step 5:</strong> Used top-3 strategy: picked highest 3 genres with ≥ 0.3 probability</li>
           <li><strong>Step 6:</strong> Additional training of 5 epochs from best checkpoint; updated if F1 improved</li>
         </ol>
-        <img src = "/Users/gayathri/Desktop/7.png" alt = "output image before Cleaning" width = "800" height="375">
+        <img src = "images/7.png" alt = "output image before Cleaning" width = "800" height="375">
 
       </p>
     
@@ -213,7 +213,7 @@
           <li><strong>Macro F1 (Test):</strong> ~0.40</li>
           <li><strong>Average Genres per Movie:</strong> 2.36</li>
           <li><strong>Precision & Recall:</strong> Balanced across frequent and rare genres</li>
-          <img src = "/Users/gayathri/Desktop/9.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/9.png" alt = "output image before Cleaning" width = "800" height="375">
         </ul>
 
         <p><strong>Multi-label Accuracy Metrics Explained:</strong></p>
@@ -228,7 +228,7 @@
             <br>This compares the overlap between predicted and true labels per sample (intersection over union) and averages it. It's a good balance between exact match and Hamming.
           </li>
         </ul>
-        <img src = "/Users/gayathri/Desktop/18.png" alt = "output image before Cleaning" width = "400" height="275">
+        <img src = "images/18.png" alt = "output image before Cleaning" width = "400" height="275">
 
         
         
@@ -240,17 +240,17 @@
         <ul>
           <li>Used confusion matrices for each genre to analyze TP/FP/FN</li>
           <li>Logged and compared predicted positives with actual ground truths (PP vs TP check)</li>
-          <img src = "/Users/gayathri/Desktop/13.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/13.png" alt = "output image before Cleaning" width = "800" height="375">
           <li>Manually checked random movie descriptions using model predictions vs true genres</li>
-          <img src = "/Users/gayathri/Desktop/12.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/12.png" alt = "output image before Cleaning" width = "800" height="375">
           <li>Plotted ROC-AUC curves for validation and test sets</li>
-          <img src = "/Users/gayathri/Desktop/10.png" alt = "output image before Cleaning" width = "800" height="375">
-          <img src = "/Users/gayathri/Desktop/11.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/10.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/11.png" alt = "output image before Cleaning" width = "800" height="375">
           <li>Other visualisations performed:</li>
-          <img src = "/Users/gayathri/Desktop/14.png" alt = "output image before Cleaning" width = "800" height="375">
-          <img src = "/Users/gayathri/Desktop/15.png" alt = "output image before Cleaning" width = "800" height="375">
-          <img src = "/Users/gayathri/Desktop/16.png" alt = "output image before Cleaning" width = "800" height="375">
-          <img src = "/Users/gayathri/Desktop/17.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/14.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/15.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/16.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/17.png" alt = "output image before Cleaning" width = "800" height="375">
         </ul>
         These steps ensured interpretability and gave confidence that genre predictions were not random but semantically meaningful.
       </p>
@@ -285,7 +285,7 @@
         <li><strong>Image Branch:</strong> ResNet-18 (pretrained) → Flatten → Linear(512→256)</li>
         <li><strong>Fusion:</strong> Concatenated [256+256] → Linear(512→128) → Dropout → Linear(128→12) → Sigmoid</li>
         <li><strong>Output:</strong> 12-dimensional multi-label prediction (one per genre)</li>
-        <img src = "/Users/gayathri/Desktop/26.png" alt = "output image before Cleaning" width = "400" height="275">
+        <img src = "images/26.png" alt = "output image before Cleaning" width = "400" height="275">
       </ul>
     
       <h4>🛠️ Training Details</h4>
@@ -300,7 +300,7 @@
     
       <h4> Final Results</h4>
       <ul>
-        <img src = "/Users/gayathri/Desktop/19.png" alt = "output image before Cleaning" width = "400" height="275">
+        <img src = "images/19.png" alt = "output image before Cleaning" width = "400" height="275">
         <li><strong>Validation Accuracy:</strong> ~76.7%</li>
         <li><strong>Precision:</strong> 92%</li>
         <li><strong>Recall:</strong> 87%</li>
@@ -310,7 +310,7 @@
       </ul>
     
       <h4> Confusion Matrix Analysis</h4>
-      <img src = "/Users/gayathri/Desktop/27.png" alt = "output image before Cleaning" width = "800" height="800">
+      <img src = "images/27.png" alt = "output image before Cleaning" width = "800" height="800">
       <p>Genres like Comedy, Drama, and Action had high TP rates, while genres like TV Movie and Animation suffered from class imbalance and lower recall. Visual inspection confirmed that model behavior aligned with human intuition for most predictions.</p>
     
       <h4>Evaluation Strategy</h4>
@@ -328,11 +328,11 @@
         <li>Fused embedding is passed through the model to get genre predictions</li>
         <li>Top-3 predictions with probability ≥ 0.3 are selected as final genres</li>
       </ul>
-      <img src = "/Users/gayathri/Desktop/20.png" alt = "output image before Cleaning" width = "400" height="275">
-      <img src = "/Users/gayathri/Desktop/21.png" alt = "output image before Cleaning" width = "400" height="275">
-      <img src = "/Users/gayathri/Desktop/23.png" alt = "output image before Cleaning" width = "400" height="275">
-      <img src = "/Users/gayathri/Desktop/24.png" alt = "output image before Cleaning" width = "400" height="275">
-      <img src = "/Users/gayathri/Desktop/25.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/20.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/21.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/23.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/24.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/25.png" alt = "output image before Cleaning" width = "400" height="275">
       
       
     
