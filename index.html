@@ -228,11 +228,7 @@
             <br>This compares the overlap between predicted and true labels per sample (intersection over union) and averages it. It's a good balance between exact match and Hamming.
           </li>
         </ul>
-        <img src = "images/18.png" alt = "output image before Cleaning" width = "400" height="275">
-
-        
-        
-    
+        <img src = "images/18.png" alt = "output image before Cleaning" width = "400" height="275">    
         
       </p>
     
@@ -322,11 +318,11 @@
       </ul>
     
       <h4>Inference Pipeline</h4>
-      <img src = "images/28.png" alt = "output image before Cleaning" width = "500" height="350">
       <ul>
         <li>Poster is transformed using the same torchvision preprocessing steps</li>
         <li>Overview is tokenized using BERT tokenizer</li>
         <li>Fused embedding is passed through the model to get genre predictions</li>
+        <img src = "images/28.png" alt = "output image before Cleaning" width = "500" height="350">
         <li>Top-3 predictions with probability ≥ 0.3 are selected as final genres</li>
       </ul>
       <img src = "images/20.png" alt = "output image before Cleaning" width = "400" height="275">
