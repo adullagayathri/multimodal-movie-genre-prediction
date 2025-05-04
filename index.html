@@ -402,25 +402,21 @@
             <code>python -m venv venv && source venv/bin/activate</code></li>
           
           <li>Install dependencies:<br>
-            <code>pip install -r requirements.txt</code></li>
           
-          <li>Download or generate the dataset (instructions in <code>data/README.md</code>)</li>
+          <li>Download or generate the dataset (instructions in <code>data/README.md</code>) and download tmdb_cleaned_final.csv and posters folder</li>         
 
-          <li>Train text model:<br>
-            <code>python train_text_model.py</code></li>
+          <li>Train text model: run data_text_model.ipynb<br>
           
-          <li>Train fusion model:<br>
-            <code>python train_fusion_model.py</code></li>
+          <li>Train fusion model:run fusion_data_cleaning.ipynb then continued by fusion_code.ipynb<br>
           
-          <li>Evaluate the model:<br>
-            <code>python evaluate.py</code></li>
+          <li>Evaluate the model and check best models of both in your same folder and verify results<br>
 
           <li>To view website locally (optional):<br>
             <code>cd website</code><br>
             Open <code>index.html</code> in browser</li>
         </ol>
         </section>
-      <section id="references">
+      <section id="references" class="tab-content">
         <h2>References</h2>
         <ul>
           <li>Devlin et al. (2019). <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</em>. <a href="https://arxiv.org/abs/1810.04805">[Link]</a></li>
@@ -438,11 +434,7 @@
           <li><strong>Both:</strong> Collaborated on designing, building, and deploying the project website with all results and explanations integrated.</li>
         </ul>
       </section>
-      
-      
-      
-
-    
+               
   </main>
 
   <footer>
