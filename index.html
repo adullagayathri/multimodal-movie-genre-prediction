@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Genre Classification</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Multi-Model Movie Genre Classification</h1>
+    <nav>
+      <ul>
+        <li><a href="#" class="tab-link active" onclick="showSection('Data', this)">Data</a></li>
+        <li><a href="#" class="tab-link" onclick="showSection('text-model', this)">Text Model</a></li>
+        <li><a href="#" class="tab-link" onclick="showSection('fusion-model', this)">Fusion Model</a></li>
+        <li><a href="#" class="tab-link" onclick="showSection('comparison-future', this)">Comparison</a></li>
+        <li><a href="#" class="tab-link" onclick="showSection('reproducibility', this)">Reproducibility</a></li>
+        <li><a href="#" class="tab-link" onclick="showSection('references', this)">References</a></li>
+        <li><a href="#" class="tab-link" onclick="showSection('team', this)">Team</a></li>
+
+      </ul>
+    </nav>    
+  </header>
+
+  <main>
+  
+    <section id="Introduction">
+      <p> In the digital entertainment industry, automated genre classification plays a pivotal role in organizing content libraries, enhancing user experience through recommendation systems, and enabling better content discovery. Traditional genre classification using unimodal approaches, particularly based on text, has had success, especially when reliable metadata is available. In this project, we focused on a text-based multi-label classification system to predict genres of movies based on their textual metadata, particularly the movie overview.Using this approach, the model attempts to assign one or more genres (such as Action, Comedy, Drama, etc.) to each movie. Unlike unimodal fusion systems, this baseline text-only model sets the foundation for future comparisons with multimodal models (e.g., text + image fusion).</p>
+        <p><strong>Project Goals: </strong> The primary objectives of this text-based genre classification project are:
+          <ol>
+           <li>To collect and clean a movie metadata dataset using the TMDb API.</li> 
+          
+            <li>perform exploratory data analysis on the overview and genre fields.</li> 
+            
+            <li>implement NLP preprocessing pipelines for movie overview text.</li> 
+            
+            <li>To train and evaluate a deep learning model (LSTM-based) on the genre prediction task.</li>
+            <li>To establish baseline performance metrics to be compared with more advanced multimodal models.</li>
+          </ol>
+          
+          </p>
+    </section>
+    <section id="Data" class="tab-content active">
+      <h2>Dataset Description and Data Acquisition</h2>    
+      <h3>Project Goals</h3>
+      <ol>
+        <li>To collect and clean a movie metadata dataset using the TMDb API.</li>
+
+        <li>To extract poster images alongside text metadata for extended use.</li>
+
+        <li>To perform exploratory data analysis on the overview and genre fields.</li>
+
+        <li>To implement NLP preprocessing pipelines for movie overview text.</li>
+
+        <li>To train and evaluate a deep learning model (LSTM-based) on the genre prediction task.</li>
+
+        <li>To establish baseline performance metrics to be compared with more advanced multimodal models.</li>
+      </ol>
+    
+      <h3>Dataset Description</h3>
+      <h4>Data Source</h4>
+      <p>Movie metadata was collected from the TMDb API. This included movie titles, overviews, genres, and poster paths. The data extraction process used multithreading to efficiently fetch and store metadata.</p>
+      <img src = "images/Img-1.png" alt = "output image before Cleaning" width = "500" height="333">
+      <h4>Image Data Extraction</h4>
+      <p>Poster images were retrieved by combining each movie's <code>poster_path</code> with the base URL (<code>https://image.tmdb.org/t/p/w500/</code>). Posters were downloaded using Python’s <code>requests</code> and <code>PIL</code>. Faulty or missing URLs were filtered out. Verification steps included:</p>
+      <ol>
+        <li>Standardizing file names from paths</li>
+
+        <li>Comparing expected vs. saved posters</li>
+
+        <li>Removing entries with missing or broken image links</li>
+      </ol>
+      <img src = "images/img-2.png" alt = "output image before Cleaning" width = "500" height="375">
+    
+      <h4>Data Cleaning</h4>
+      <ol>
+        <li>Dropped rows with missing values</li>
+
+        <li>Removed duplicates</li>
+
+        <li>Ensured poster availability and consistency</li>
+
+        <li>Final dataset: ~30,016 samples with text and image metadata</li>
+      </ol>
+      <img src = "images/img-3.png" alt = "output image before Cleaning" width = "500" height="375">
+    
+      <h3>Exploratory Data Analysis (EDA)</h3>
+      <ol>
+        <li><strong>Genre Distribution:</strong> Drama, Comedy, and Action were most frequent. Rare genres like War and Western were underrepresented.</li>
+        <img src = "images/img-4.png" alt = "output image before Cleaning" width = "600" height="375">
+        <li><strong>Additional Taglines and Posters:</strong> Downloaded extra metadata to strengthen representation of rare genres.</li>
+        <img src = "images/4.png" alt = "output image before Cleaning" width = "800" height="375">
+        
+        <li><strong>Genre Cleanup and Consolidation:</strong> Merged overlapping or rare genres into a new “Others” category.</li>
+        <img src = "images/2.png" alt = "output image before Cleaning" width = "500" height="375">
+        
+        <li><strong>Genre Co-occurrence Network:</strong> Created graph connecting genres by their co-occurrence. Weakly connected genres were merged or dropped.</li>
+        <div class="before-after">
+          <img src="images/1.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/img-5.png" alt="After Cleaning" class="after-img">
+        </div>
+        <li><strong>Heatmap Visualization:</strong> A co-occurrence heatmap supported network analysis and guided genre reduction.</li>
+        <img src = "images/img-6.png" alt = "output image before Cleaning" width = "500" height="375">
+        <li><strong>Multi-Label Analysis:</strong> PCA was performed to see distribution</li>
+        <img src = "images/2.png" alt = "output image before Cleaning" width = "500" height="375">
+        <li><strong>Overview Text Length:</strong> Overviews typically ranged from 30 to 150 words. Very short/long ones were reviewed.</li>
+        <img src = "images/img-7.png" alt = "output image before Cleaning" width = "500" height="375">
+      </ol>
+      <section id="handling-imbalance">
+        <h2>Handling Data Imbalance</h2>
+        <p>
+          To address the challenge of genre imbalance, a multi-step strategy was employed throughout data preprocessing and augmentation. First, we observed that genres like <strong>Drama</strong> and <strong>Comedy</strong> were significantly overrepresented compared to underrepresented ones like <strong>War</strong> or <strong>Western</strong>. To mitigate this, we specifically downloaded additional metadata and posters for movies belonging to these rare categories.
+        </p>
+        <p>
+          Next, we refined our label space by grouping sparse or semantically overlapping genres into a new consolidated category called <strong>"Others"</strong>. This helped in reducing noise and ensuring a more balanced label distribution. Moreover, genres that were disconnected in the co-occurrence network graph were either merged or removed altogether.
+        </p>
+        <p>
+          During model training, we employed <strong>stratified batching</strong> techniques to ensure that each batch contained a fair distribution of labels. This, combined with the earlier augmentation strategies, allowed the model to receive balanced training signals and avoid overfitting to the majority genres.
+        </p>
+        <p>
+          In summary, our handling of data imbalance combined <strong>augmentation, intelligent label restructuring,</strong> and <strong>balanced batch training</strong> to yield a more robust and fair multi-label classification model.
+        </p>
+      </section>
+      
+    
+      <h3>Genre Refinement and Label Strategy</h3>
+      <ol>
+        <li><strong>Tagline Retrieval:</strong> Collected additional taglines to provide more descriptive input for text modeling.</li>
+        
+        <li><strong>Focused Augmentation:</strong> Targeted movies from low-frequency genres to address imbalance.</li>
+        
+        <li><strong>Genre Merging:</strong> Combined similar or rare genres into “Others” to avoid fragmentation.</li>
+        
+        <li><strong>Network Graph Construction:</strong> Analyzed genre connectivity and dropped isolated labels.</li>
+        
+        <li><strong>Heatmap Analysis:</strong> Validated grouping decisions and measured correlation strength.</li>
+      </ol>
+      <h3>Multi-Label Binarization</h3>
+      <p>
+        After finalizing the cleaned dataset and refining the genre labels, we converted the multi-genre annotations into a machine-readable format using <code>MultiLabelBinarizer</code> from Scikit-learn.
+      </p>
+      <p>
+        Each movie can belong to multiple genres (e.g., <em>Action</em>, <em>Adventure</em>, and <em>Comedy</em> together), so this task is inherently multi-label. Binarization transforms the list of genres for each movie into a binary vector — where each column represents one genre, and a value of <code>1</code> indicates that the movie belongs to that genre.
+      </p>
+      <p>
+        This was a crucial step to enable supervised multi-label classification using models like LSTM, GRU, and DistilBERT, which expect fixed-size input and output tensors. The binary label matrix formed the ground truth used for training and evaluation.
+      </p>
+      <p>
+        final shape after binarization was : <strong>(21554, 18)</strong> 
+      </p>
+      <img src = "images/5.png" alt = "output image before Cleaning" width = "800" height="375">
+      <p>
+        Additionally, this binarized format helped us:
+        <ul>
+          <li>Compute class-wise evaluation metrics like F1-score and precision</li>
+          <li>Track predicted positives vs actual positives (PP vs TP)</li>
+          <li>Enable genre-specific threshold tuning and co-occurrence analysis</li>
+        </ul>
+      </p>
+
+    </section>
+    
+
+    <section id="text-model" class="tab-content">
+      <h2>Text-Based Movie Genre Classification</h2>
+    
+      <p><strong>Introduction:</strong> This project focuses on multi-label genre classification using only textual data — specifically, movie overviews. Our goal was to identify one or more genres associated with a movie by analyzing its description.</p>
+    
+      <p><strong>Initial Approach:</strong> We began with traditional deep learning models like <strong>LSTM</strong> and <strong>GRU</strong>. Despite tuning, both models underperformed due to overfitting and weak generalization. Key limitations:
+        <ul>
+          <li>Dataset was relatively small for deep RNNs.</li>
+          <li>RNNs lacked rich contextual understanding.</li>
+          <li>F1 scores remained low; especially on rare genres.</li>
+        </ul>
+      </p>
+    
+      <p><strong>Transition to Transformers:</strong> To overcome these limitations, we used <strong>DistilBERT</strong>, a lightweight transformer pretrained on large corpora. It offered semantic richness and better generalization with fewer training examples.</p>
+    
+      <p><strong>Model Configuration:</strong>
+        <ul>
+          <li><strong>Tokenizer:</strong> distilbert-base-uncased</li>
+          <li><strong>Max Length:</strong> 256 tokens</li>
+          <li><strong>Loss:</strong> BCEWithLogitsLoss with class-wise positive weights</li>
+          <li><strong>Optimizer:</strong> AdamW</li>
+          <li><strong>Learning Rate:</strong> 2e-5</li>
+          <li><strong>Batch Size:</strong> 64</li>
+          <li><strong>Epochs:</strong> 25 + 5 (refinement)</li>
+          <li><strong>Scheduler:</strong> CosineAnnealingLR</li>
+          <li><strong>Threshold:</strong> Initially 0.5, later tuned per-genre between 0.1–0.9</li>
+        </ul>
+        <img src = "images/6.png" alt = "output image before Cleaning" width = "800" height="375">
+      </p>
+    
+      <p><strong>Improvements Over Time:</strong>
+        <ol>
+          <li><strong>Step 1:</strong> Baseline DistilBERT with global threshold → weak precision on rare classes</li>
+          <li><strong>Step 2:</strong> Logged PP (Predicted Positives) vs TP (True Positives) to track overprediction</li>
+          <img src = "/Users/gayathri/Desktop/8.png" alt = "output image before Cleaning" width = "800" height="375">
+          <li><strong>Step 3:</strong> Saved epoch-wise models → selected best epoch using minimum PP–TP difference</li>
+          <li><strong>Step 4:</strong> Per-genre threshold optimization using F1 maximization</li>
+          <li><strong>Step 5:</strong> Used top-3 strategy: picked highest 3 genres with ≥ 0.3 probability</li>
+          <li><strong>Step 6:</strong> Additional training of 5 epochs from best checkpoint; updated if F1 improved</li>
+        </ol>
+        <img src = "images/7.png" alt = "output image before Cleaning" width = "800" height="375">
+
+      </p>
+    
+      <p><strong>Final Results:</strong></p>
+        <ul>
+          <li><strong>Macro F1 (Validation):</strong> ~0.46</li>
+          <li><strong>Macro F1 (Test):</strong> ~0.40</li>
+          <li><strong>Average Genres per Movie:</strong> 2.36</li>
+          <li><strong>Precision & Recall:</strong> Balanced across frequent and rare genres</li>
+          <img src = "images/9.png" alt = "output image before Cleaning" width = "800" height="375">
+        </ul>
+
+        <p><strong>Multi-label Accuracy Metrics Explained:</strong></p>
+        <ul>
+          <li><strong>Exact Match (Subset Accuracy):</strong> 0.0213  
+            <br>This metric requires the model to predict <em>all genres</em> for a movie exactly right. It’s very strict, so scores are typically low for multi-label tasks.
+          </li>
+          <li><strong>Hamming Accuracy:</strong> 0.7136  
+            <br>This measures how many individual genre labels were correctly predicted out of all possible labels, averaged across samples. It's a more lenient and interpretable score.
+          </li>
+          <li><strong>Jaccard Score (Samples Avg):</strong> 0.1562  
+            <br>This compares the overlap between predicted and true labels per sample (intersection over union) and averages it. It's a good balance between exact match and Hamming.
+          </li>
+        </ul>
+        <img src = "images/18.png" alt = "output image before Cleaning" width = "400" height="275">
+
+        
+        
+    
+        
+      </p>
+    
+      <p><strong>How We Verified Genre Predictions:</strong>
+        <ul>
+          <li>Used confusion matrices for each genre to analyze TP/FP/FN</li>
+          <li>Logged and compared predicted positives with actual ground truths (PP vs TP check)</li>
+          <img src = "images/13.png" alt = "output image before Cleaning" width = "800" height="375">
+          <li>Manually checked random movie descriptions using model predictions vs true genres</li>
+          <img src = "images/12.png" alt = "output image before Cleaning" width = "800" height="375">
+          <li>Plotted ROC-AUC curves for validation and test sets</li>
+          <img src = "images/10.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/11.png" alt = "output image before Cleaning" width = "800" height="375">
+          <li>Other visualisations performed:</li>
+          <img src = "images/14.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/15.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/16.png" alt = "output image before Cleaning" width = "800" height="375">
+          <img src = "images/17.png" alt = "output image before Cleaning" width = "800" height="375">
+        </ul>
+        These steps ensured interpretability and gave confidence that genre predictions were not random but semantically meaningful.
+      </p>
+    </section>
+    
+
+    <section id="fusion-model" class="tab-content">
+      <h2>Fusion-Based Movie Genre Classification</h2>
+    
+      <p><strong>Introduction:</strong> This model leverages both textual and visual modalities by combining semantic embeddings from BERT and visual features from ResNet-18. The goal was to enhance genre classification performance by using richer multimodal data.</p>
+    
+      <p><strong>Why Fusion?</strong> While text-based models (like BiLSTM or DistilBERT) performed well individually, they struggled with ambiguous descriptions or missing keywords. Likewise, posters alone were not sufficient. Fusing text and image enabled the model to capture complementary signals and improved performance, especially in multi-label settings.</p>
+    
+      <h4>Dataset Summary</h4>
+      <ul>
+        <li><strong>Source:</strong> Metadata + posters from TMDb API</li>
+        <li><strong>Final Sample Count:</strong> ~30,000 with valid overviews and posters</li>
+        <li><strong>Labels:</strong> 12 genres (multi-label), binarized using <code>MultiLabelBinarizer</code></li>
+        <li><strong>Image Format:</strong> All posters resized to 224x224</li>
+      </ul>
+    
+      <h4>Preprocessing</h4>
+      <ul>
+        <li><strong>Text:</strong> Cleaned overviews, BERT tokenizer (max length 128)</li>
+        <li><strong>Images:</strong> Applied torchvision transforms — Resize, Normalize, ColorJitter, Affine, Horizontal Flip</li>
+        <li><strong>Alignment:</strong> Ensured 1-to-1 matching between text and image data</li>
+      </ul>
+    
+      <h4>Model Architecture</h4>
+      <ul>
+        <li><strong>Text Branch:</strong> BERT → [CLS] → Linear(768→256)</li>
+        <li><strong>Image Branch:</strong> ResNet-18 (pretrained) → Flatten → Linear(512→256)</li>
+        <li><strong>Fusion:</strong> Concatenated [256+256] → Linear(512→128) → Dropout → Linear(128→12) → Sigmoid</li>
+        <li><strong>Output:</strong> 12-dimensional multi-label prediction (one per genre)</li>
+        <img src = "images/26.png" alt = "output image before Cleaning" width = "400" height="275">
+      </ul>
+    
+      <h4>🛠️ Training Details</h4>
+      <ul>
+        <li><strong>Optimizer:</strong> Adam</li>
+        <li><strong>Loss Function:</strong> BCEWithLogitsLoss</li>
+        <li><strong>Epochs:</strong> 11</li>
+        <li><strong>Batch Size:</strong> 32</li>
+        <li><strong>Learning Rate:</strong> 1e-4</li>
+        <li><strong>Dropout Rate:</strong> 0.3</li>
+      </ul>
+    
+      <h4> Final Results</h4>
+      <ul>
+        <img src = "images/19.png" alt = "output image before Cleaning" width = "400" height="275">
+        <li><strong>Validation Accuracy:</strong> ~76.7%</li>
+        <li><strong>Precision:</strong> 92%</li>
+        <li><strong>Recall:</strong> 87%</li>
+        <li><strong>F1 Score:</strong> 92.47%</li>
+        <li><strong>Test Accuracy:</strong> ~61%</li>
+        <li><strong>Avg Genres per Movie:</strong> 2.36</li>
+      </ul>
+    
+      <h4> Confusion Matrix Analysis</h4>
+      <img src = "images/27.png" alt = "output image before Cleaning" width = "800" height="800">
+      <p>Genres like Comedy, Drama, and Action had high TP rates, while genres like TV Movie and Animation suffered from class imbalance and lower recall. Visual inspection confirmed that model behavior aligned with human intuition for most predictions.</p>
+    
+      <h4>Evaluation Strategy</h4>
+      <ul>
+        <li>Used macro/micro F1 to balance frequent and rare genres</li>
+        <li>Tracked Hamming accuracy and Jaccard score</li>
+        <li>Evaluated both exact match and per-genre thresholds</li>
+        <li>Manual spot-checking of top-5 predicted genres against movie posters and overviews</li>
+      </ul>
+    
+      <h4>Inference Pipeline</h4>
+      <ul>
+        <li>Poster is transformed using the same torchvision preprocessing steps</li>
+        <li>Overview is tokenized using BERT tokenizer</li>
+        <li>Fused embedding is passed through the model to get genre predictions</li>
+        <li>Top-3 predictions with probability ≥ 0.3 are selected as final genres</li>
+      </ul>
+      <img src = "images/20.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/21.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/23.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/24.png" alt = "output image before Cleaning" width = "400" height="275">
+      <img src = "images/25.png" alt = "output image before Cleaning" width = "400" height="275">
+      
+      
+    
+      <h3>Conclusion</h3>
+      <p>
+        The journey of this project began with a focus on <strong>text-only models</strong> to classify movie genres based solely on their overviews. This allowed us to build a strong unimodal baseline using models like BiLSTM and DistilBERT. However, text descriptions alone sometimes lacked the specificity or clarity needed to differentiate closely related genres. 
+      </p>
+      <p>
+        To overcome this, we extended our pipeline by incorporating <strong>poster image data</strong>, enabling the model to learn visual cues associated with specific genres (e.g., darker palettes for horror, vibrant tones for animation). By <strong>fusing text and image representations</strong>, the final multimodal model captured both semantic and visual context—significantly improving genre prediction accuracy and robustness.
+      </p>
+      <p>
+        Ultimately, this fusion approach simulates how humans perceive movie genres—by combining both the storyline and the visual design. The result is a much more reliable and generalizable genre classification system suitable for recommendation engines, content tagging, or streaming platforms.
+      </p>
+      </section>
+      <section id="comparison-future" class="tab-content">
+        <h2>Comparison & Future Work</h2>
+      
+        <h3>Model Comparison</h3>
+        <p><strong>Text-Only Model (DistilBERT):</strong></p>
+        <ul>
+          <li>Validation Macro F1: ~0.46</li>
+          <li>Test Macro F1: ~0.40</li>
+          <li>Precision and recall moderate across genres</li>
+          <li>Used only movie overviews (text)</li>
+        </ul>
+      
+        <p><strong>Fusion Model (DistilBERT + ResNet18):</strong></p>
+        <ul>
+          <li>Validation Macro F1: ~0.92</li>
+          <li>Test Macro F1: ~0.90</li>
+          <li>High precision (~92%) and recall (~87%)</li>
+          <li>Used both movie overviews and posters (text + image)</li>
+        </ul>
+      
+        <h3>Conclusion</h3>
+        <p>
+          The text-only model helped us understand how well genres can be predicted from descriptions alone.
+          However, some genres were hard to identify using text. So, we fused image and text features to improve performance.
+          The fusion model performed much better overall, capturing both visual and semantic signals for genre classification.
+        </p>
+      
+        <h3>Future Work</h3>
+        <ul>
+          <li>Use better image models like Vision Transformers</li>
+          <li>Try advanced fusion strategies like attention-based merging</li>
+          <li>Fine-tune the BERT model for improved text understanding</li>
+          <li>Build a real-time web app for automatic genre prediction</li>
+          <li>Explore sub-genre or multi-level genre prediction</li>
+        </ul>
+      </section>
+      <section id="reproducibility" class="tab-content">
+        <h2>Reproducibility & Instructions</h2>
+        <p><strong>GitHub Repository:</strong> 
+          <a href="https://github.com/adullagayathri/multimodal-movie-genre-prediction.git" target="_blank">
+            https://github.com/adullagayathri/multimodal-movie-genre-prediction.git
+          </a>
+        </p>
+        <h4>Setup Instructions</h4>
+        <ol>
+          <li>Clone the repository:<br>
+            <code>git clone https://github.com/adullagayathri/multimodal-movie-genre-prediction.git</code></li>
+          
+          <li>Navigate to the project folder:<br>
+            <code>cd multimodal-movie-genre-prediction</code></li>
+          
+          <li>Create a virtual environment (recommended):<br>
+            <code>python -m venv venv && source venv/bin/activate</code></li>
+          
+          <li>Install dependencies:<br>
+          
+          <li>Download or generate the dataset (instructions in <code>data/README.md</code>) and download tmdb_cleaned_final.csv and posters folder</li>         
+
+          <li>Train text model: run data_text_model.ipynb<br>
+          
+          <li>Train fusion model:run fusion_data_cleaning.ipynb then continued by fusion_code.ipynb<br>
+          
+          <li>Evaluate the model and check best models of both in your same folder and verify results<br>
+
+          <li>To view website locally (optional):<br>
+            <code>cd website</code><br>
+            Open <code>index.html</code> in browser</li>
+        </ol>
+        </section>
+        <section id="references" class="tab-content">
+          <h2>References</h2>
+          <ul>
+            <li>Devlin et al. (2019). <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</em>. <a href="https://arxiv.org/abs/1810.04805">[Link]</a></li>
+            <li>Sanh et al. (2019). <em>DistilBERT: smaller, faster, cheaper and lighter</em>. <a href="https://arxiv.org/abs/1910.01108">[Link]</a></li>
+            <li>He et al. (2016). <em>Deep residual learning for image recognition</em>. <a href="https://arxiv.org/abs/1512.03385">[Link]</a></li>
+            <li>Baltrušaitis et al. (2018). <em>Multimodal Machine Learning: A Survey</em>. <a href="https://arxiv.org/abs/1705.09406">[Link]</a></li>
+            <li>Zhang & Zhou (2014). <em>A review on multi-label learning algorithms</em>. <a href="https://ieeexplore.ieee.org/document/6586579">[Link]</a></li>
+          </ul>
+        </section>
+        <section id="team" class="tab-content">
+          <h2>Team Contributions</h2>
+          <ul>
+            <li><strong>Gayathri Adulla:</strong> Led dataset preparation, exploratory analysis, and full development of the text-based model (LSTM, GRU, DistilBERT).</li>
+            <li><strong>Uma Maheshwar Reddy:</strong> Led the fusion model architecture, training, and evaluation combining text and image embeddings.</li>
+            <li><strong>Both:</strong> Collaborated on designing, building, and deploying the project website with all results and explanations integrated.</li>
+          </ul>
+        </section>
+               
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Movie Genre Classification Project by GAYATHRI AND UMA MAHESHWAR REDDY</p>
+  </footer>
+  <!-- Tab navigation functionality -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    function showSection(sectionId, link) {
+      const sections = document.querySelectorAll(".tab-content");
+      const tabs = document.querySelectorAll(".tab-link");
+
+      sections.forEach(section => {
+        section.classList.remove("active");
+      });
+      tabs.forEach(tab => {
+        tab.classList.remove("active");
+      });
+
+      document.getElementById(sectionId).classList.add("active");
+      link.classList.add("active");
+    }
+
+    window.showSection = showSection;
+  });
+</script>
+
+</body>
+</html>
