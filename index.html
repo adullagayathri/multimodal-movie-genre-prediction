@@ -322,9 +322,9 @@
       </ul>
     
       <h4>Inference Pipeline</h4>
+      <img src = "images/28.png" alt = "output image before Cleaning" width = "500" height="350">
       <ul>
         <li>Poster is transformed using the same torchvision preprocessing steps</li>
-        <img src = "images/28.png" alt = "output image before Cleaning" width = "400" height="275">
         <li>Overview is tokenized using BERT tokenizer</li>
         <li>Fused embedding is passed through the model to get genre predictions</li>
         <li>Top-3 predictions with probability ≥ 0.3 are selected as final genres</li>
