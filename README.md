@@ -7,5 +7,5 @@
 
 -> images folder has my output images that I used in my website
 
--> MAIN branch has all datasets. Final dataset used for training is tmdb_cleaned_final.csv
+-> MAIN branch has all datasets in data folder. Final dataset used for training is tmdb_cleaned_final.csv
 
