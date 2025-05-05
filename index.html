@@ -330,8 +330,57 @@
       <img src = "images/23.png" alt = "output image before Cleaning" width = "400" height="275">
       <img src = "images/24.png" alt = "output image before Cleaning" width = "400" height="275">
       <img src = "images/25.png" alt = "output image before Cleaning" width = "400" height="275">
-      
-      
+      <section id="inference-details" class="tab-content">
+      <h2>Inference Script: Fusion Model Prediction</h2>
+    
+      <p>This section explains how we perform genre prediction during inference using our trained <strong>Fusion Model</strong>, which combines text (overview) and image (poster).</p>
+    
+      <h3>Step-by-Step Inference Process</h3>
+      <ol>
+        <li><strong>Model Loading:</strong><br>
+          Loads the trained model checkpoint <code>final_model.pt</code> and switches to evaluation mode using <code>model.eval()</code>.
+        </li>
+        <li><strong>Text Preprocessing:</strong><br>
+          Uses <code>distilbert-base-uncased</code> tokenizer to tokenize the overview.<br>
+          Applies padding and truncation (max length 128) and converts text to tensors.
+        </li>
+        <li><strong>Image Preprocessing:</strong><br>
+          The movie poster is resized to 224×224 and transformed using:
+          <ul>
+            <li><code>Resize</code>, <code>ToTensor</code>, <code>Normalize</code></li>
+            <li>Optional: <code>ColorJitter</code>, <code>Affine</code>, <code>HorizontalFlip</code></li>
+          </ul>
+        </li>
+        <li><strong>Input Preparation:</strong><br>
+          Text and image tensors are moved to GPU/CPU and reshaped for batch inference.
+        </li>
+        <li><strong>Prediction:</strong><br>
+          Model returns raw logits → passed through <code>sigmoid</code> → threshold ≥ <code>0.3</code> → genre prediction.
+        </li>
+        <li><strong>Genre Decoding:</strong><br>
+          Final predictions are mapped back to genre names using <code>MultiLabelBinarizer.classes_</code>.
+        </li>
+      </ol>
+    
+      <h3> Sample Usage</h3>
+      <pre><code>python fusion_inference.py \
+      --image_path posters/sample.jpg \
+      --overview "A young boy discovers he has magical powers and joins a hidden wizarding school."</code></pre>
+    
+      <h3>Output</h3>
+      <ul>
+        <li><strong>Shows posters of genre given</strong></li>
+        <img src = "images/29.png" alt = "output image before Cleaning" width = "400" height="275">
+        
+      </ul>
+    
+      <h3>Notes</h3>
+      <ul>
+        <li>Ensure inputs use the same transforms and tokenizer as in training.</li>
+        <li>Inference script supports GPU acceleration for faster processing.</li>
+        <li>This script can be extended into a web or API application using Flask or FastAPI.</li>
+      </ul>       
+          
     
       <h3>Conclusion</h3>
       <p>
@@ -343,7 +392,7 @@
       <p>
         Ultimately, this fusion approach simulates how humans perceive movie genres—by combining both the storyline and the visual design. The result is a much more reliable and generalizable genre classification system suitable for recommendation engines, content tagging, or streaming platforms.
       </p>
-      </section>
+    </section>
       <section id="comparison-future" class="tab-content">
         <h2>Comparison & Future Work</h2>
       
