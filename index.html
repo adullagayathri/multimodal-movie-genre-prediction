@@ -28,18 +28,21 @@
     <section id="Introduction">
       <p> In the digital entertainment industry, automated genre classification plays a pivotal role in organizing content libraries, enhancing user experience through recommendation systems, and enabling better content discovery. Traditional genre classification using unimodal approaches, particularly based on text, has had success, especially when reliable metadata is available. In this project, we focused on a text-based multi-label classification system to predict genres of movies based on their textual metadata, particularly the movie overview.Using this approach, the model attempts to assign one or more genres (such as Action, Comedy, Drama, etc.) to each movie. Unlike unimodal fusion systems, this baseline text-only model sets the foundation for future comparisons with multimodal models (e.g., text + image fusion).</p>
         <p><strong>Project Goals: </strong> The primary objectives of this text-based genre classification project are:
-          <ol>
-           <li>To collect and clean a movie metadata dataset using the TMDb API.</li> 
+        <ol>
+        <li>To collect and clean a movie metadata dataset using the TMDb API.</li>
+
+        <li>To extract poster images alongside text metadata for extended use.</li>
+
+        <li>To perform exploratory data analysis on the overview and genre fields.</li>
+
+        <li>To implement NLP preprocessing pipelines for movie overview text.</li>
+
+        <li>To train and evaluate a deep learning model (LSTM-based) on the genre prediction task.</li>
+
+        <li>To establish baseline performance metrics to be compared with more advanced multimodal models.</li>
+        </ol>
           
-            <li>perform exploratory data analysis on the overview and genre fields.</li> 
-            
-            <li>implement NLP preprocessing pipelines for movie overview text.</li> 
-            
-            <li>To train and evaluate a deep learning model (LSTM-based) on the genre prediction task.</li>
-            <li>To establish baseline performance metrics to be compared with more advanced multimodal models.</li>
-          </ol>
-          
-          </p>
+        </p>
     </section>
     <section id="Data" class="tab-content active">
       <h2>Dataset Description and Data Acquisition</h2>    
@@ -60,7 +63,7 @@
     
       <h3>Dataset Description</h3>
       <h4>Data Source</h4>
-      <p>Movie metadata was collected from the TMDb API. This included movie titles, overviews, genres, and poster paths. The data extraction process used multithreading to efficiently fetch and store metadata.</p>
+      <p>Movie metadata was collected from the TMDb API. This included movie titles, overviews, genres, and poster paths. Later on, during training we couldn't predict genres as expected based solely on overview so we extracted taglines from same source and saved in new column. The data extraction process used multithreading to efficiently fetch and store metadata.</p>
       <img src = "images/Img-1.png" alt = "output image before Cleaning" width = "500" height="333">
       <h4>Image Data Extraction</h4>
       <p>Poster images were retrieved by combining each movie's <code>poster_path</code> with the base URL (<code>https://image.tmdb.org/t/p/w500/</code>). Posters were downloaded using Python’s <code>requests</code> and <code>PIL</code>. Faulty or missing URLs were filtered out. Verification steps included:</p>
