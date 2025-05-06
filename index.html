@@ -45,124 +45,164 @@
         </p>
     </section>
     <section id="Data" class="tab-content active">
-      <h2>Dataset Description and Data Acquisition</h2>    
-      <h3>Project Goals</h3>
-      <ol>
-        <li>To collect and clean a movie metadata dataset using the TMDb API.</li>
+      <h3>Data Collection and Preprocessing </h3>
 
-        <li>To extract poster images alongside text metadata for extended use.</li>
+      <p>
+        Our dataset was curated from the TMDb (The Movie Database) API using Python scripts. Initially, we collected core movie metadata such as:
+      </p>
+      <ul>
+        <li><strong>Movie Title</strong></li>
+        <li><strong>Overview</strong> (plot summary)</li>
+        <li><strong>Genres</strong></li>
+        <li><strong>Poster Path</strong></li>
+      </ul>
+      <img src = "images/40.png" alt = "output image before Cleaning" width = "500" height="333">
+      <p>
+        After dropping empty rows or values, we got:
+        <img src = "images/42.png" alt = "output image before Cleaning" width = "500" height="333">
 
-        <li>To perform exploratory data analysis on the overview and genre fields.</li>
-
-        <li>To implement NLP preprocessing pipelines for movie overview text.</li>
-
-        <li>To train and evaluate a deep learning model (LSTM-based) on the genre prediction task.</li>
-
-        <li>To establish baseline performance metrics to be compared with more advanced multimodal models.</li>
-      </ol>
-    
-      <h3>Dataset Description</h3>
-      <h4>Data Source</h4>
-      <p>Movie metadata was collected from the TMDb API. This included movie titles, overviews, genres, and poster paths. Later on, during training we couldn't predict genres as expected based solely on overview so we extracted taglines from same source and saved in new column. The data extraction process used multithreading to efficiently fetch and store metadata.</p>
-      <img src = "images/Img-1.png" alt = "output image before Cleaning" width = "500" height="333">
-      <h4>Image Data Extraction</h4>
-      <p>Poster images were retrieved by combining each movie's <code>poster_path</code> with the base URL (<code>https://image.tmdb.org/t/p/w500/</code>). Posters were downloaded using Python’s <code>requests</code> and <code>PIL</code>. Faulty or missing URLs were filtered out. Verification steps included:</p>
-      <ol>
-        <li>Standardizing file names from paths</li>
-
-        <li>Comparing expected vs. saved posters</li>
-
-        <li>Removing entries with missing or broken image links</li>
-      </ol>
-      <img src = "images/img-2.png" alt = "output image before Cleaning" width = "500" height="375">
-    
-      <h4>Data Cleaning</h4>
-      <ol>
-        <li>Dropped rows with missing values</li>
-
-        <li>Removed duplicates</li>
-
-        <li>Ensured poster availability and consistency</li>
-
-        <li>Final dataset: ~30,016 samples with text and image metadata</li>
-      </ol>
-      <img src = "images/img-3.png" alt = "output image before Cleaning" width = "500" height="375">
-    
-      <h3>Exploratory Data Analysis (EDA)</h3>
-      <ol>
-        <li><strong>Genre Distribution:</strong> Drama, Comedy, and Action were most frequent. Rare genres like War and Western were underrepresented.</li>
-        <img src = "images/img-4.png" alt = "output image before Cleaning" width = "600" height="375">
-        <li><strong>Additional Taglines and Posters:</strong> Downloaded extra metadata to strengthen representation of rare genres.</li>
-        <img src = "images/4.png" alt = "output image before Cleaning" width = "800" height="375">
-        
-        <li><strong>Genre Cleanup and Consolidation:</strong> Merged overlapping or rare genres into a new “Others” category.</li>
-        <img src = "images/2.png" alt = "output image before Cleaning" width = "500" height="375">
-        
-        <li><strong>Genre Co-occurrence Network:</strong> Created graph connecting genres by their co-occurrence. Weakly connected genres were merged or dropped.</li>
+      </p>
+      <p>
+        However, during early training stages, we discovered that overviews alone were not descriptive enough for genre prediction, especially for movies with vague or generic plots. This led us to extract an additional field:
+        <strong>Taglines</strong>, which are short promotional phrases (e.g., “The world will be watching”).
         <div class="before-after">
-          <img src="images/1.png" alt="Before Cleaning" class="before-img">
+          <img src="images/40.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/41.png" alt="After Cleaning" class="after-img">
+        </div>
+      </p>
+      
+      <p>
+        We augmented our dataset by:
+      </p>
+      <ul>
+        <li>Re-querying TMDb API to fetch taglines for all movies</li>
+        <img src = "images/48.png" alt = "output image before Cleaning" width = "500" height="333">
+        <li>Removing entries with missing taglines</li>
+        <li>Dropping movies with null or empty overviews, genres, or poster paths</li>
+        <img src = "images/50.png" alt = "output image before Cleaning" width = "500" height="333">
+        <li>Standardizing and combining overview + tagline for improved input quality</li>
+      </ul>
+      
+      <p>
+        After filtering, the final dataset size was reduced to approximately <strong>21,554</strong> high-quality samples with complete overview, tagline, genre labels, and poster paths.
+        <img src = "images/51.png" alt = "output image before Cleaning" width = "500" height="333">
+      </p>
+      
+      <h3>Genre Label Refinement</h3>
+      <p>
+        The original genre list contained 20+ labels, including many with extremely low frequency (e.g., Western, War, History, TV Movie). To improve model learning and generalization, we:
+        
+      </p>
+      <ul>
+        <li>Analyzed genre frequency distribution</li>
+        <img src = "images/47.png" alt = "output image before Cleaning" width = "500" height="333">
+        <li>Merged low-frequency or overlapping genres into a new class: <strong>"Others"</strong></li>
+        <div class="before-after">
+          <img src="images/46.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/52.png" alt="After Cleaning" class="after-img">
+        </div>
+        <li>Finalized a cleaned set of <strong>12 genre labels</strong> suitable for classification</li>
+      </ul>
+      
+      <h3>Data Cleaning Process</h3>
+      <ul>
+        <li><strong>Duplicates Removed:</strong> Ensured that duplicate movie IDs or titles were dropped</li>
+        <li><strong>Null Handling:</strong> Removed rows with missing genres, overview, tagline, or posters</li>
+        <li><strong>Poster Verification:</strong> Checked if the poster was actually downloaded and readable using PIL</li>
+        <img src = "images/53.png" alt = "output image before Cleaning" width = "500" height="333">
+      </ul>
+      
+      <h3>Exploratory Data Analysis (EDA)</h3>
+      <ul>
+        <li><strong>Genre Frequency Plot:</strong> Highlighted the overrepresentation of Drama, Comedy, and Action</li>
+        <div class="before-after">
+          <img src="images/44.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/49.png" alt="After Cleaning" class="after-img">
+        </div>
+        <li><strong>Genre co-occurence heatmap</strong> Visualized genre co-occurence before and after balancing data</li>
+        <div class="before-after">
+          <img src="images/45.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/54.png" alt="After Cleaning" class="after-img">
+        </div>
+        <li><strong>Multi-Label Distribution:</strong> Found the average number of genres per movie to be 2.36</li>
+        <img src = "images/9.png" alt = "output image before Cleaning" width = "500" height="333">
+        <li><strong>Overview Length:</strong> Analyzed token counts and filtered extreme cases</li>
+        <img src = "images/img-7.png" alt = "output image before Cleaning" width = "500" height="333">
+        <li><strong>Genre co-occurence network</strong> Visualized genre co-occurence network before and after balancing data</li>
+        <div class="before-after">
+          <img src="images/55.png" alt="Before Cleaning" class="before-img">
           <span class="arrow">→</span>
           <img src="images/img-5.png" alt="After Cleaning" class="after-img">
         </div>
-        <li><strong>Heatmap Visualization:</strong> A co-occurrence heatmap supported network analysis and guided genre reduction.</li>
-        <img src = "images/img-6.png" alt = "output image before Cleaning" width = "500" height="375">
-        <li><strong>Multi-Label Analysis:</strong> PCA was performed to see distribution</li>
-        <img src = "images/2.png" alt = "output image before Cleaning" width = "500" height="375">
-        <li><strong>Overview Text Length:</strong> Overviews typically ranged from 30 to 150 words. Very short/long ones were reviewed.</li>
-        <img src = "images/img-7.png" alt = "output image before Cleaning" width = "500" height="375">
-      </ol>
-      <section id="handling-imbalance">
-        <h2>Handling Data Imbalance</h2>
-        <p>
-          To address the challenge of genre imbalance, a multi-step strategy was employed throughout data preprocessing and augmentation. First, we observed that genres like <strong>Drama</strong> and <strong>Comedy</strong> were significantly overrepresented compared to underrepresented ones like <strong>War</strong> or <strong>Western</strong>. To mitigate this, we specifically downloaded additional metadata and posters for movies belonging to these rare categories.
-        </p>
-        <p>
-          Next, we refined our label space by grouping sparse or semantically overlapping genres into a new consolidated category called <strong>"Others"</strong>. This helped in reducing noise and ensuring a more balanced label distribution. Moreover, genres that were disconnected in the co-occurrence network graph were either merged or removed altogether.
-        </p>
-        <p>
-          During model training, we employed <strong>stratified batching</strong> techniques to ensure that each batch contained a fair distribution of labels. This, combined with the earlier augmentation strategies, allowed the model to receive balanced training signals and avoid overfitting to the majority genres.
-        </p>
-        <p>
-          In summary, our handling of data imbalance combined <strong>augmentation, intelligent label restructuring,</strong> and <strong>balanced batch training</strong> to yield a more robust and fair multi-label classification model.
-        </p>
-      </section>
+      </ul>
       
-    
-      <h3>Genre Refinement and Label Strategy</h3>
-      <ol>
-        <li><strong>Tagline Retrieval:</strong> Collected additional taglines to provide more descriptive input for text modeling.</li>
-        
-        <li><strong>Focused Augmentation:</strong> Targeted movies from low-frequency genres to address imbalance.</li>
-        
-        <li><strong>Genre Merging:</strong> Combined similar or rare genres into “Others” to avoid fragmentation.</li>
-        
-        <li><strong>Network Graph Construction:</strong> Analyzed genre connectivity and dropped isolated labels.</li>
-        
-        <li><strong>Heatmap Analysis:</strong> Validated grouping decisions and measured correlation strength.</li>
-      </ol>
-      <h3>Multi-Label Binarization</h3>
+      <h3>Handling Class Imbalance</h3>
       <p>
-        After finalizing the cleaned dataset and refining the genre labels, we converted the multi-genre annotations into a machine-readable format using <code>MultiLabelBinarizer</code> from Scikit-learn.
+        Our genre distribution was highly skewed. To manage this:
       </p>
-      <p>
-        Each movie can belong to multiple genres (e.g., <em>Action</em>, <em>Adventure</em>, and <em>Comedy</em> together), so this task is inherently multi-label. Binarization transforms the list of genres for each movie into a binary vector — where each column represents one genre, and a value of <code>1</code> indicates that the movie belongs to that genre.
-      </p>
-      <p>
-        This was a crucial step to enable supervised multi-label classification using models like LSTM, GRU, and DistilBERT, which expect fixed-size input and output tensors. The binary label matrix formed the ground truth used for training and evaluation.
-      </p>
-      <p>
-        final shape after binarization was : <strong>(21554, 18)</strong> 
-      </p>
-      <img src = "images/5.png" alt = "output image before Cleaning" width = "800" height="375">
-      <p>
-        Additionally, this binarized format helped us:
-        <ul>
-          <li>Compute class-wise evaluation metrics like F1-score and precision</li>
-          <li>Track predicted positives vs actual positives (PP vs TP)</li>
-          <li>Enable genre-specific threshold tuning and co-occurrence analysis</li>
-        </ul>
-      </p>
+      <ul>
+        <li><strong>Augmentation:</strong> Downloaded additional movies for underrepresented genres</li>
+        <li><strong>Genre Merging:</strong> Combined very sparse classes into “Others”</li>
+        <li><strong>Graph-Based Pruning:</strong> Constructed a genre co-occurrence network and removed weakly connected nodes</li>
+        <li><strong>Label Binarization:</strong> Used <code>MultiLabelBinarizer</code> to prepare label matrix (shape: <code>(21554, 18)</code>)</li>
+      </ul>
+      <h3>Multi-Label Binarization and Final Dataset</h3>
 
+      <p>
+        In this task, each movie could belong to multiple genres (e.g., "Action", "Comedy", and "Adventure" together). Therefore, we approached this as a <strong>multi-label classification problem</strong> (as opposed to single-label or multi-class).
+      </p>
+      
+      <p>
+        To convert genre lists into machine-readable format, we used Scikit-learn’s <code>MultiLabelBinarizer</code>. This created a binary matrix where:
+      </p>
+      
+      <ul>
+        <li>Each column represents a genre label (e.g., “Drama”, “Horror”)</li>
+        <li>Each row represents a movie</li>
+        <li>Value = <code>1</code> if the movie belongs to that genre, else <code>0</code></li>
+      </ul>
+      
+      <p>
+        For example, a movie with genres [“Action”, “Thriller”] would have a vector like:
+      </p>
+      
+      <pre><code>[0, 1, 0, 1, 0, ..., 0]</code></pre>
+      
+      <p>
+        After this transformation:
+      </p>
+      <ul>
+        <li><strong>Final label matrix shape:</strong> <code>(21554, 18)</code></li>
+        <li><strong>Number of genres encoded:</strong> 18 (before final genre merging and consolidation into 12 classes)</li>
+        <li><strong>Final dataset used:</strong> <code>tmdb_cleaned_final.csv</code></li>
+        <img src = "images/5.png" alt = "output image before Cleaning" width = "500" height="333">
+      </ul>
+      
+      <p>
+        This binarized label format enabled training with <code>BCEWithLogitsLoss</code> and allowed per-genre metrics like precision, recall, and F1 score.
+      </p>
+      
+      <p>
+        Additionally, this structure made it easier to apply:
+      </p>
+      <ul>
+        <li>Stratified batching to balance genre occurrence</li>
+        <li>Threshold tuning for genre-wise decision boundaries</li>
+        <li>Multi-label evaluation metrics such as Hamming loss, subset accuracy, and Jaccard index</li>
+      </ul>
+
+      
+      <h3>Final Dataset Overview</h3>
+      <ul>
+        <li><strong>Number of Samples:</strong> 21,554 movies</li>
+        <li><strong>Final Genres:</strong> 12, including merged “Others”</li>
+        <li><strong>Metadata:</strong> Clean overview + tagline, valid poster, and genre list</li>
+        <li><strong>Poster Storage:</strong> ~21k resized 224x224 .jpg images in posters/ folder</li>
+      </ul>
     </section>
     
 
