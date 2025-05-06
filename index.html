@@ -56,10 +56,20 @@
         <li><strong>Genres</strong></li>
         <li><strong>Poster Path</strong></li>
       </ul>
-      
+      <img src = "images/40.png" alt = "output image before Cleaning" width = "500" height="333">
+      <p>
+        After dropping empty rows or values, we got:
+        <img src = "images/42.png" alt = "output image before Cleaning" width = "500" height="333">
+
+      </p>
       <p>
         However, during early training stages, we discovered that overviews alone were not descriptive enough for genre prediction, especially for movies with vague or generic plots. This led us to extract an additional field:
         <strong>Taglines</strong>, which are short promotional phrases (e.g., “The world will be watching”).
+        <div class="before-after">
+          <img src="images/40.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/41.png" alt="After Cleaning" class="after-img">
+        </div>
       </p>
       
       <p>
@@ -67,22 +77,32 @@
       </p>
       <ul>
         <li>Re-querying TMDb API to fetch taglines for all movies</li>
+        <img src = "images/48.png" alt = "output image before Cleaning" width = "500" height="333">
         <li>Removing entries with missing taglines</li>
         <li>Dropping movies with null or empty overviews, genres, or poster paths</li>
+        <img src = "images/50.png" alt = "output image before Cleaning" width = "500" height="333">
         <li>Standardizing and combining overview + tagline for improved input quality</li>
       </ul>
       
       <p>
         After filtering, the final dataset size was reduced to approximately <strong>21,554</strong> high-quality samples with complete overview, tagline, genre labels, and poster paths.
+        <img src = "images/51.png" alt = "output image before Cleaning" width = "500" height="333">
       </p>
       
       <h3>Genre Label Refinement</h3>
       <p>
         The original genre list contained 20+ labels, including many with extremely low frequency (e.g., Western, War, History, TV Movie). To improve model learning and generalization, we:
+        
       </p>
       <ul>
         <li>Analyzed genre frequency distribution</li>
+        <img src = "images/47.png" alt = "output image before Cleaning" width = "500" height="333">
         <li>Merged low-frequency or overlapping genres into a new class: <strong>"Others"</strong></li>
+        <div class="before-after">
+          <img src="images/46.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/52.png" alt="After Cleaning" class="after-img">
+        </div>
         <li>Finalized a cleaned set of <strong>12 genre labels</strong> suitable for classification</li>
       </ul>
       
@@ -91,14 +111,33 @@
         <li><strong>Duplicates Removed:</strong> Ensured that duplicate movie IDs or titles were dropped</li>
         <li><strong>Null Handling:</strong> Removed rows with missing genres, overview, tagline, or posters</li>
         <li><strong>Poster Verification:</strong> Checked if the poster was actually downloaded and readable using PIL</li>
+        <img src = "images/53.png" alt = "output image before Cleaning" width = "500" height="333">
       </ul>
       
       <h3>Exploratory Data Analysis (EDA)</h3>
       <ul>
         <li><strong>Genre Frequency Plot:</strong> Highlighted the overrepresentation of Drama, Comedy, and Action</li>
-        <li><strong>Tagline Word Cloud:</strong> Visualized common promotional terms and genre indicators</li>
-        <li><strong>Multi-Label Distribution:</strong> Found the average number of genres per movie to be ~2.3</li>
-        <li><strong>Overview + Tagline Length:</strong> Analyzed token counts and filtered extreme cases</li>
+        <div class="before-after">
+          <img src="images/44.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/49.png" alt="After Cleaning" class="after-img">
+        </div>
+        <li><strong>Genre co-occurence heatmap</strong> Visualized genre co-occurence before and after balancing data</li>
+        <div class="before-after">
+          <img src="images/45.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/54.png" alt="After Cleaning" class="after-img">
+        </div>
+        <li><strong>Multi-Label Distribution:</strong> Found the average number of genres per movie to be 2.36</li>
+        <img src = "images/9.png" alt = "output image before Cleaning" width = "500" height="333">
+        <li><strong>Overview Length:</strong> Analyzed token counts and filtered extreme cases</li>
+        <img src = "images/img-7.png" alt = "output image before Cleaning" width = "500" height="333">
+        <li><strong>Genre co-occurence network</strong> Visualized genre co-occurence network before and after balancing data</li>
+        <div class="before-after">
+          <img src="images/55.png" alt="Before Cleaning" class="before-img">
+          <span class="arrow">→</span>
+          <img src="images/img-5.png" alt="After Cleaning" class="after-img">
+        </div>
       </ul>
       
       <h3>Handling Class Imbalance</h3>
@@ -140,6 +179,7 @@
         <li><strong>Final label matrix shape:</strong> <code>(21554, 18)</code></li>
         <li><strong>Number of genres encoded:</strong> 18 (before final genre merging and consolidation into 12 classes)</li>
         <li><strong>Final dataset used:</strong> <code>tmdb_cleaned_final.csv</code></li>
+        <img src = "images/5.png" alt = "output image before Cleaning" width = "500" height="333">
       </ul>
       
       <p>
