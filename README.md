@@ -9,3 +9,5 @@
 
 -> MAIN branch has all datasets in data folder. Final dataset used for training is tmdb_cleaned_final.csv
 
+-> run fusion_inference_script to see how fusion works and experiment with different genres to see predictions
+
