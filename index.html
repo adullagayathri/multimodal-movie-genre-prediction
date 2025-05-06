@@ -76,7 +76,7 @@
       </p>
       <ul>
         <li>Re-querying TMDb API to fetch taglines for all movies</li>
-        <img src = "images/48.png" alt = "output image before Cleaning" width = "300" height="333">
+        <img src = "images/48.png" alt = "output image before Cleaning" width = "500" height="333">
         <li>Removing entries with missing taglines</li>
         <li>Dropping movies with null or empty overviews, genres, or poster paths</li>
         <img src = "images/50.png" alt = "output image before Cleaning" width = "500" height="333">
@@ -86,7 +86,7 @@
       <p>
         After filtering, the final dataset size was reduced to approximately <strong>21,554</strong> high-quality samples with complete overview, tagline, genre labels, and poster paths.
       </p>
-      <img src = "images/51.png" alt = "output image before Cleaning" width = "450" height="333">
+      <img src = "images/51.png" alt = "output image before Cleaning" width = "500" height="333">
       
       <h3>Genre Label Refinement</h3>
       <p>
@@ -339,121 +339,163 @@
     
         
     <section id="fusion-model" class="tab-content">
-      <h2>Fusion-Based Movie Genre Classification</h2>
-    
-      <p><strong>Introduction:</strong> This model leverages both textual and visual modalities by combining semantic embeddings from BERT and visual features from ResNet-18. The goal was to enhance genre classification performance by using richer multimodal data.</p>
-    
-      <p><strong>Why Fusion?</strong> While text-based models (like BiLSTM or DistilBERT) performed well individually, they struggled with ambiguous descriptions or missing keywords. Likewise, posters alone were not sufficient. Fusing text and image enabled the model to capture complementary signals and improved performance, especially in multi-label settings.</p>
-    
-      <h4>Dataset Summary</h4>
-      <ul>
-        <li><strong>Source:</strong> Metadata + posters from TMDb API</li>
-        <li><strong>Final Sample Count:</strong> ~30,000 with valid overviews and posters</li>
-        <li><strong>Labels:</strong> 12 genres (multi-label), binarized using <code>MultiLabelBinarizer</code></li>
-        <li><strong>Image Format:</strong> All posters resized to 224x224</li>
-      </ul>
-    
-      <h4>Preprocessing</h4>
-      <ul>
-        <li><strong>Text:</strong> Cleaned overviews, BERT tokenizer (max length 128)</li>
-        <li><strong>Images:</strong> Applied torchvision transforms — Resize, Normalize, ColorJitter, Affine, Horizontal Flip</li>
-        <li><strong>Alignment:</strong> Ensured 1-to-1 matching between text and image data</li>
-      </ul>
-    
-      <h4>Model Architecture</h4>
-      <ul>
-        <li><strong>Text Branch:</strong> BERT → [CLS] → Linear(768→256)</li>
-        <li><strong>Image Branch:</strong> ResNet-18 (pretrained) → Flatten → Linear(512→256)</li>
-        <li><strong>Fusion:</strong> Concatenated [256+256] → Linear(512→128) → Dropout → Linear(128→12) → Sigmoid</li>
-        <li><strong>Output:</strong> 12-dimensional multi-label prediction (one per genre)</li>
-      </ul>
-      <img src="images/26.png" alt="Architecture diagram" width="400" height="275">
-    
-      <h4>Training Details</h4>
-      <ul>
-        <li><strong>Optimizer:</strong> Adam</li>
-        <li><strong>Loss Function:</strong> BCEWithLogitsLoss</li>
-        <li><strong>Epochs:</strong> 11</li>
-        <li><strong>Batch Size:</strong> 32</li>
-        <li><strong>Learning Rate:</strong> 1e-4</li>
-        <li><strong>Dropout Rate:</strong> 0.3</li>
-      </ul>
-    
-      <h4>Final Results</h4>
-      <img src="images/19.png" alt="Validation graph" width="400" height="275">
-      <ul>
-        <li><strong>Validation Accuracy:</strong> ~76.7%</li>
-        <li><strong>Precision:</strong> 92%</li>
-        <li><strong>Recall:</strong> 87%</li>
-        <li><strong>F1 Score:</strong> 92.47%</li>
-        <li><strong>Test Accuracy:</strong> ~61%</li>
-        <li><strong>Avg Genres per Movie:</strong> 2.36</li>
-      </ul>
-    
-      <h4>Confusion Matrix Analysis</h4>
-      <img src="images/27.png" alt="Confusion matrix" width="800" height="800">
-      <p>Genres like Comedy, Drama, and Action had high TP rates, while genres like TV Movie and Animation suffered from class imbalance and lower recall. Visual inspection confirmed that model behavior aligned with human intuition for most predictions.</p>
-    
-      <h4>Evaluation Strategy</h4>
-      <ul>
-        <li>Used macro/micro F1 to balance frequent and rare genres</li>
-        <li>Tracked Hamming accuracy and Jaccard score</li>
-        <li>Evaluated both exact match and per-genre thresholds</li>
-        <li>Manual spot-checking of top-5 predicted genres against movie posters and overviews</li>
-      </ul>
-    
-      <h4>Inference Pipeline</h4>
-      <ul>
-        <li>Poster is transformed using the same torchvision preprocessing steps</li>
-        <li>Overview is tokenized using BERT tokenizer</li>
-        <li>Fused embedding is passed through the model to get genre predictions</li>
-        <li>Top-3 predictions with probability ≥ 0.3 are selected as final genres</li>
-      </ul>
-      <img src="images/28.png" alt="Inference flow" width="500" height="350">
-      <img src="images/20.png" alt="Example prediction" width="400" height="275">
-      <img src="images/21.png" alt="Example prediction" width="400" height="275">
-      <img src="images/23.png" alt="Example prediction" width="400" height="275">
-      <img src="images/24.png" alt="Example prediction" width="400" height="275">
-      <img src="images/25.png" alt="Example prediction" width="400" height="275">
-    
-      <h2>Inference Script: Fusion Model Prediction</h2>
-    
-      <p>This section explains how we perform genre prediction during inference using our trained <strong>Fusion Model</strong>, which combines text (overview) and image (poster).</p>
-    
-      <h3>Step-by-Step Inference Process</h3>
-      <ol>
-        <li><strong>Model Loading:</strong><br> Loads the trained model checkpoint <code>final_model.pt</code> and switches to evaluation mode using <code>model.eval()</code>.</li>
-        <li><strong>Text Preprocessing:</strong><br> Uses <code>distilbert-base-uncased</code> tokenizer to tokenize the overview. Applies padding and truncation (max length 128) and converts text to tensors.</li>
-        <li><strong>Image Preprocessing:</strong><br> The movie poster is resized to 224×224 and transformed using:<br>
-          <ul>
-            <li><code>Resize</code>, <code>ToTensor</code>, <code>Normalize</code></li>
-            <li>Optional: <code>ColorJitter</code>, <code>Affine</code>, <code>HorizontalFlip</code></li>
-          </ul>
-        </li>
-        <li><strong>Input Preparation:</strong><br> Text and image tensors are moved to GPU/CPU and reshaped for batch inference.</li>
-        <li><strong>Prediction:</strong><br> Model returns raw logits → passed through <code>sigmoid</code> → threshold ≥ <code>0.3</code> → genre prediction.</li>
-        <li><strong>Genre Decoding:</strong><br> Final predictions are mapped back to genre names using <code>MultiLabelBinarizer.classes_</code>.</li>
-      </ol>
-    
-      <h3>Sample Usage</h3>
-      <pre><code>python fusion_inference.py \
-    --image_path posters/sample.jpg \
-    --overview "A young boy discovers he has magical powers and joins a hidden wizarding school."</code></pre>
-    
-      <h3>Output</h3>
-      <ul>
-        <li><strong>gives top 3 predicted genres</strong></li>
-      </ul>
+        <h2>Fusion-Based Movie Genre Classification</h2>
       
-    
-      <h3>Notes</h3>
-      <ul>
-        <li>we tried giving genre names and get related genres posters</li>
-        <img src="images/29.png" alt="Inference example output" width="800" height="575">
-        <li>Inference script supports GPU acceleration for faster processing.</li>
-        <li>This script can be extended into a web or API application using Flask or FastAPI.</li>
-      </ul>
-    </section>
+        <p><strong>Objective:</strong> To improve genre prediction performance by integrating both text (overview + tagline) and image (poster) data into a single multimodal model.</p>
+      
+        <h3>Why Fusion?</h3>
+        <p>
+          While text-only models like BiLSTM and DistilBERT were effective in identifying genres from overviews, they often struggled with vague descriptions or when critical genre-specific terms were missing. Similarly, image-only models lacked semantic context. By combining both, we aimed to capture complementary signals—textual narrative and visual cues—thereby improving classification.
+        </p>
+      
+        <h3>Dataset Preparation (from <code>fusion_data_cleaning.ipynb</code>)</h3>
+        <ul>
+          <li>Started with the cleaned CSV containing <code>overview</code>, <code>tagline</code>, <code>genres</code>, and <code>poster_path</code>.</li>
+          <li>Dropped rows missing either <strong>taglines</strong> or <strong>posters</strong>.</li>
+          <li>Performed exploratory validation to ensure each row had valid and accessible data for both modalities.</li>
+          <li>Stratified multi-label splitting was used to preserve genre distribution across train, val, test sets.</li>
+          <li><strong>Final dataset shape:</strong> 21,554 rows, 18 binarized genres.</li>
+        </ul>
+      
+        <h3>Preprocessing Steps</h3>
+        <ul>
+          <li><strong>Text:</strong> Overview and tagline concatenated → tokenized using DistilBERT tokenizer with <code>max_length=128</code> → padded & truncated → returned as <code>input_ids</code> and <code>attention_mask</code>.</li>
+          <li><strong>Image:</strong> Posters resized to 224x224 → converted to tensor → normalized using ImageNet stats. Augmentations included:
+            <ul>
+              <li><code>ColorJitter</code>, <code>RandomAffine</code>, and <code>HorizontalFlip</code> during training only</li>
+            </ul>
+          </li>
+          <li><strong>Custom PyTorch Dataset:</strong> Returns a tuple of (tokenized text, image tensor, genre labels).</li>
+        </ul>
+      
+        <h3>Model Architecture (from <code>fusion_code.ipynb</code>)</h3>
+        <ul>
+          <li><strong>Text Path:</strong> DistilBERT → Extract [CLS] embedding → Linear(768→256)</li>
+          <li><strong>Image Path:</strong> ResNet18 (pretrained) → AdaptiveAvgPool2d → Flatten → Linear(512→256)</li>
+          <li><strong>Fusion:</strong> Concatenated vector [256+256] → Linear(512→128) → Dropout(0.3) → Linear(128→18) → Sigmoid</li>
+          <li>Output: Probabilities across all 18 genres (multi-label)</li>
+        </ul>
+        <img src="images/26.png" alt="Architecture diagram" width="400" height="275">
+      
+        <h3>Training Configuration</h3>
+        <ul>
+          <li><strong>Loss:</strong> BCEWithLogitsLoss (without class weights)</li>
+          <li><strong>Optimizer:</strong> Adam (learning rate = 1e-4)</li>
+          <li><strong>Epochs:</strong> 11 total</li>
+          <li><strong>Batch Size:</strong> 32</li>
+          <li>Validation macro F1 monitored manually to determine best epoch</li>
+        </ul>
+      
+        <h3>Results</h3>
+        <ul>
+          <li><strong>Validation F1 Score:</strong> ~0.92</li>
+          <li><strong>Test F1 Score:</strong> ~0.90</li>
+          <li><strong>Precision:</strong> ~92%, <strong>Recall:</strong> ~87%</li>
+          <li><strong>Test Accuracy:</strong> ~61%</li>
+          <li><strong>Average genres per movie:</strong> 2.36</li>
+          <li><strong>Strategy used:</strong> Top-3 predicted genres with probability ≥ 0.3</li>
+          <div class="image-grid">
+          <img src="images/20.png" alt="Confusion Matrix 1">
+          <img src="images/21.png" alt="Confusion Matrix 1">
+          <img src="images/23.png" alt="Confusion Matrix 2">
+          <img src="images/24.png" alt="Confusion Matrix 3">
+          
+          </div>
+        </ul>
+        <img src="images/19.png" alt="Validation graph" width="400" height="275">
+      
+        <h3>Confusion Matrix & Genre-wise Behavior</h3>
+        <p>
+          Genres such as Comedy, Drama, and Action had high true positive rates. In contrast, classes like TV Movie, Western, and War had lower recall. Fusion helped balance performance across frequent and rare genres.
+        </p>
+        
+        <h3>Evaluation Strategy</h3>
+        <ul>
+          <li>Macro F1, Hamming accuracy, and Jaccard used for multi-label evaluation and results are:</li>
+
+          <li>Subset accuracy used for strict correctness analysis</li>
+          <li>Threshold tuning and confusion matrix plotting helped refine final model</li>
+          <img src="images/27.png" alt="Confusion matrix" width="800" height="800">
+        </ul>
+      
+        <h3>Inference Script (<code>fusion_inference__script.ipynb</code>)</h3>
+        <p>
+          The fusion inference script enables real-time prediction of movie genres using both a poster image and its textual overview. It encapsulates the exact data processing pipeline used during training to ensure consistency and reproducibility.
+        </p>
+        
+        <h4>Core Inference Pipeline</h4>
+        <ol>
+          <li><strong>Model Loading:</strong><br>
+            Loads the best-performing trained model <code>final_model.pt</code> and sets it to evaluation mode using <code>model.eval()</code>. It also loads the <code>MultiLabelBinarizer</code> instance to reverse-map genre predictions.
+          </li>
+          <li><strong>Text Tokenization:</strong><br>
+            The movie <code>overview</code> is tokenized using the same <code>distilbert-base-uncased</code> tokenizer from HuggingFace Transformers.
+            <ul>
+              <li>Max length = 128</li>
+              <li>Padding and truncation are applied</li>
+              <li>Converted to PyTorch tensors for GPU/CPU inference</li>
+            </ul>
+          </li>
+          <li><strong>Image Preprocessing:</strong><br>
+            The poster is opened using PIL and transformed using:
+            <ul>
+              <li><code>Resize(224, 224)</code></li>
+              <li><code>ToTensor()</code></li>
+              <li><code>Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])</code></li>
+            </ul>
+            These are the same transformations applied during training.
+          </li>
+          <li><strong>Forward Pass:</strong><br>
+            The script combines text and image embeddings, passes them through the model, and applies a <code>sigmoid</code> activation to get probabilities across 18 genres.
+          </li>
+          <li><strong>Decoding:</strong><br>
+            Final genre indices are mapped to human-readable labels using the saved <code>MultiLabelBinarizer.classes_</code> list.
+          </li>
+        </ol>
+        
+        <h4>Sample Usage</h4>
+        <pre><code>python fusion_inference.py \
+          --image_path posters/sample.jpg \
+          --overview "A young boy discovers he has magical powers and joins a hidden wizarding school."</code></pre>
+        
+        <h4>Output</h4>
+        <ul>
+          <li>Returns a list of top 3 predicted genres such as: <code>['Fantasy', 'Adventure', 'Family']</code></li>
+          <img src="images/57.png" alt="Sample Inference Output" width="800" height="575">
+          <li>Genres are printed to console and optionally saved with their probabilities</li>
+        </ul>
+        
+        <img src="images/58.png" alt="Sample Inference Output" width="800" height="575">
+        
+        <h4>Design Decisions & Robustness</h4>
+        <ul>
+          <li>Handles missing or corrupt poster files with error messages</li>
+          <li>Validates text length and padding before tokenization</li>
+          <li>Includes batch dimension reshaping to support both single and batch mode</li>
+          <li>GPU acceleration used if available, else defaults to CPU</li>
+        </ul>
+        
+        <h4>Extensibility Tips</h4>
+        <ul>
+          <li>Can be extended into a Flask/FastAPI web server with UI uploads</li>
+          <li>Post-processing can be added to filter low-confidence predictions</li>
+          <li>Could return genre-specific confidence bars or tag visual markers on UI</li>
+        </ul>
+
+        <h3>Key Learnings</h3>
+        <ul>
+          <li>Fusing images and overview+tagline helped the model infer genre better for edge cases.</li>
+          <li>Image augmentations improved generalization for posters with minimal visual clues.</li>
+          <li>Tagline addition gave rich textual signals when overviews were generic.</li>
+          <li>Fusion was critical for difficult-to-identify genres like Fantasy and Sci-Fi.</li>
+        </ul>
+      
+        <h3>Conclusion</h3>
+        <p>
+          The multimodal fusion model demonstrated significant improvement over text-only models, showing how visual and textual information complement each other in genre classification. It closely mimics how human viewers intuitively predict genres using both narrative and visuals.
+        </p>
+      </section>
+      
 
       <section id="comparison-future" class="tab-content">
         <h2>Comparison & Future Work</h2>
@@ -515,7 +557,7 @@
 
           <li>Train text model: run data_text_model.ipynb<br>
           
-          <li>Train fusion model:run fusion_data_cleaning.ipynb then continued by fusion_code.ipynb<br>
+          <li>Train fusion model:run fusion_data_cleaning.ipynb then continued by fusion_code.ipynb followed by inference_fusion.ipynb<br>
           
           <li>Evaluate the model and check best models of both in your same folder and verify results<br>
 
@@ -548,7 +590,6 @@
   <footer>
     <p>&copy; 2025 Movie Genre Classification Project by GAYATHRI AND UMA MAHESHWAR REDDY</p>
   </footer>
-  <!-- Tab navigation functionality -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     function showSection(sectionId, link) {
