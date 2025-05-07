@@ -137,26 +137,21 @@ footer {
   background-repeat: no-repeat;
 }
 
-section {
-  max-width: 900px;
-  margin: auto;
+.bg-section {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 3rem 0; /* space above and below */
+}
+
+.bg-section section {
+  background-color: #ffffff;
+  color: #000000;
   padding: 2rem;
-  background: white;
+  margin: 0 auto;
+  max-width: 900px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-
-.bg-text {
-  background-image: url("images/bg-text.jpg");
-}
-
-.bg-fusion {
-  background-image: url("images/bg-fusion.jpg");
-}
-
-.bg-data {
-  background-image: url("images/81.jpg");
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 
