@@ -129,7 +129,7 @@ footer {
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-/* Section wrapper controls full-width background */
+
 .section-wrapper {
   padding: 40px 0;
   background-size: cover;
@@ -137,7 +137,6 @@ footer {
   background-repeat: no-repeat;
 }
 
-/* Optional: if section has white card-style layout */
 section {
   max-width: 900px;
   margin: auto;
@@ -147,7 +146,7 @@ section {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Unique background images */
+
 .bg-text {
   background-image: url("images/bg-text.jpg");
 }
