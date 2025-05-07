@@ -76,7 +76,7 @@
       </p>
       <ul>
         <li>Re-querying TMDb API to fetch taglines for all movies</li>
-        <img src = "images/48.png" alt = "output image before Cleaning" width = "500" height="333">
+        <img src = "images/48.png" alt = "output image before Cleaning" width = "800" height="333">
         <li>Removing entries with missing taglines</li>
         <li>Dropping movies with null or empty overviews, genres, or poster paths</li>
         <img src = "images/50.png" alt = "output image before Cleaning" width = "500" height="333">
@@ -86,7 +86,7 @@
       <p>
         After filtering, the final dataset size was reduced to approximately <strong>21,554</strong> high-quality samples with complete overview, tagline, genre labels, and poster paths.
       </p>
-      <img src = "images/51.png" alt = "output image before Cleaning" width = "500" height="333">
+      <img src = "images/51.png" alt = "output image before Cleaning" width = "800" height="333">
       
       <h3>Genre Label Refinement</h3>
       <p>
@@ -347,7 +347,40 @@
         <p>
           While text-only models like BiLSTM and DistilBERT were effective in identifying genres from overviews, they often struggled with vague descriptions or when critical genre-specific terms were missing. Similarly, image-only models lacked semantic context. By combining both, we aimed to capture complementary signals—textual narrative and visual cues—thereby improving classification.
         </p>
+        <h2>Fusion Methods: Concatenation-Based Feature Fusion</h2>
+
+        <h3>Step 1: Preparation for Input</h3>
+        <p>
+          The input image and text undergo separate preprocessing pipelines. Images are passed through a pretrained <strong>ResNet-18</strong> model to extract high-level visual features. Simultaneously, the movie overview text is tokenized using a <strong>BERT tokenizer</strong> to produce <code>input_ids</code> and <code>attention_mask</code> required for the transformer model.
+        </p>
       
+        <h3>Step 2: Feature Extraction</h3>
+        <p>
+          Visual features are extracted by forwarding the image through ResNet-18, where the final classification layer is replaced with a <code>Linear</code> layer to obtain a <strong>256-dimensional</strong> feature vector.
+        </p>
+        <p>
+          Text features are extracted by passing the tokenized text through the BERT model. The embedding corresponding to the <code>[CLS]</code> token (also called <code>pooler_output</code>) is taken, which is a <strong>768-dimensional</strong> representation. This is then passed through another <code>Linear</code> layer to reduce it to a <strong>256-dimensional</strong> text feature vector.
+        </p>
+      
+        <h3>Step 3: Feature Fusion</h3>
+        <p>
+          The <strong>256-dimensional image feature</strong> and <strong>256-dimensional text feature</strong> are <strong>concatenated</strong> along the feature dimension. This results in a <strong>512-dimensional combined feature vector</strong> that holds both visual and semantic information from the poster and overview respectively.
+        </p>
+      
+        <h3>Step 4: Joint Classification</h3>
+        <p>
+          The fused 512-dimensional feature vector is then passed through the classification head for <strong>multi-label prediction</strong>. The classification head includes:
+        </p>
+        <ul>
+          <li>A <code>Linear(512 → 128)</code> layer</li>
+          <li><code>ReLU</code> activation</li>
+          <li><code>Dropout</code> to reduce overfitting</li>
+          <li>Final <code>Linear(128 → 18)</code> output layer followed by a <code>Sigmoid</code> activation</li>
+        </ul>
+        <p>
+          The <strong>sigmoid layer</strong> allows independent probabilities for each genre, making it suitable for <em>multi-label classification</em> where genres are not mutually exclusive.
+        </p>
+            
         <h3>Dataset Preparation (from <code>fusion_data_cleaning.ipynb</code>)</h3>
         <ul>
           <li>Started with the cleaned CSV containing <code>overview</code>, <code>tagline</code>, <code>genres</code>, and <code>poster_path</code>.</li>
@@ -376,8 +409,10 @@
           <li>Output: Probabilities across all 18 genres (multi-label)</li>
         </ul>
         <img src="images/26.png" alt="Architecture diagram" width="400" height="275">
+        <img src="images/73.png" alt="Architecture diagram" width="400" height="275">
       
         <h3>Training Configuration</h3>
+        <p>The model performed movie genre classification by uniting ResNet18 for image feature extraction with BERT for text feature extraction. Both modalities share a classifier to which their respective features have been joined through vector concatenation with dimension 256. During training the model implemented Binary Cross Entropy loss combined with Adam optimizer for 11 epochs. After training the model showed the improvement very progressively  when coming to its accuracy , precision  and recall metrices through its training epochs which will be overall an accuracy measure  around 76.7% adn with the precision of 92% and recall score of 87%  and f1 score around  92.47% . which will reflect good multi label classification abilities.</p>
         <ul>
           <li><strong>Loss:</strong> BCEWithLogitsLoss (without class weights)</li>
           <li><strong>Optimizer:</strong> Adam (learning rate = 1e-4)</li>
@@ -410,6 +445,7 @@
         </p>
         
         <h3>Evaluation Strategy</h3>
+        <p>The evaluation model achieved reasonable generalization results when tested on the test set. The model demonstrates a moderate average error rate against unseen data because its test loss reaches 0.2338. The model produced 61.00% accuracy which indicates it managed to predict genres effectively for more than fifty percent of testing examples. The model exhibits better precision than recall when handling multi-label classification problems due to its 67% precision and 63% recall scores on the test set. This model shows adequate predictive power nonetheless it needs enhancement particularly targeting improved recall for better genre identification across different test samples.</p>
         <ul>
           <li>Macro F1, Hamming accuracy, and Jaccard used for multi-label evaluation and results are:</li>
 
