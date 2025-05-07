@@ -1,24 +1,31 @@
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f9f9f9; 
-  color: #333;
+  background-image: url('images/81.jpg');
+  background-size: cover;          /* Stretchs to fill */
+  background-repeat: no-repeat;
+  background-position: center center; /* Keeps image centered */
+  background-attachment: fixed;    /* Keeps it fixed while scrolling */
+  color: #f0f0f0;
 }
 
-
+/* Header */
 header {
-  background-color: #cdb4db; 
-  color: white;
+  background-color: transparent;
+  color: #e31c1c;
   padding: 1rem;
   text-align: center;
+  text-shadow: 0 0 5px #be0d0d, 0 0 10px #b62828, 0 0 20px #ff0000;
 }
 
 header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 2.5rem;
 }
 
+/* Navigation Tabs */
 nav ul {
   list-style: none;
   padding: 0;
@@ -26,63 +33,84 @@ nav ul {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
+  
 }
 
 nav a {
-  color: white;
+  color: #fff;
   text-decoration: none;
   font-weight: bold;
-  padding: 6px 12px;
+  padding: 8px 16px;
+  border: 2px solid transparent;
   border-radius: 6px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 nav a:hover {
-  background-color: #e0bbff;
-  color: #222;
+  border-color: #0048ff;
+  box-shadow: 0 0 8px #00fff7, 0 0 15px #00fff7;
   transform: scale(1.05);
 }
 
 .tab-link.active {
-  background-color: #cdb4db;
-  color: #222;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border-color: #00fff7;
+  background-color: rgba(0, 255, 247, 0.1);
+  box-shadow: 0 0 8px #00fff7, 0 0 15px #00fff7;
 }
 
+/* Main Container with Background Image */
 main {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 2rem auto;
-  padding: 1rem;
-  background-image: images/81.jpg;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(0, 0, 0, 0.7); /* fallback if image fails */
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  color: #f0f0f0;
 }
 
-
+/* Sections */
 section {
   margin-bottom: 50px;
   padding: 20px;
-  background-color: #f5f0fa;
-  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
   transition: background-color 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.15);
 }
 
 h2 {
-  color: #5e548e;
-  border-bottom: 2px solid #e5e7eb;
+  color: #ff0000;
+  border-bottom: 2px solid #f70505;
   padding-bottom: 0.5rem;
   margin-top: 0;
 }
 
+h3 {
+  color: #ff0000;
+  border-bottom: 2px solid #fb0b0b;
+  padding-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+/* Footer */
 footer {
-  background-color: #cdb4db;
-  color: white;
+  background-color: #111;
+  color: #ff3705;
   text-align: center;
   padding: 1rem;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 10px #fb3008;
   position: fixed;
   bottom: 0;
   width: 100%;
 }
 
+/* Tab Content */
 .tab-content {
   display: none;
   opacity: 0;
@@ -94,7 +122,7 @@ footer {
   opacity: 1;
 }
 
-
+/* Before-After Image Comparison */
 .before-after {
   display: flex;
   align-items: center;
@@ -106,17 +134,18 @@ footer {
 .before-after img {
   width: 300px;
   height: auto;
-  border: 2px solid #ccc;
+  border: 2px solid #00fff7;
   border-radius: 8px;
+  box-shadow: 0 0 12px #00fff7;
 }
 
 .arrow {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #444;
+  color: #ff0e0e;
 }
 
-
+/* Image Grid */
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -128,11 +157,12 @@ footer {
   width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 2px solid #00fff7;
+  box-shadow: 0 0 10px #00fff7;
 }
 
-
-
-
-
-
+/* Responsive Images */
+img {
+  max-width: 100%;
+  height: auto;
+}
