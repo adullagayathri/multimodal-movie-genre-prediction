@@ -45,8 +45,7 @@
         </p>
     </section>
 
-    <section id="Data" class="tab-content active section-bg-1">
-      <div class="section-inner">
+    <section id="Data" class="tab-content active">
       <h3>Data Collection and Preprocessing </h3>
 
       <p>
@@ -78,7 +77,7 @@
       </p>
       <ul>
         <li>Re-querying TMDb API to fetch taglines for all movies</li>
-        <img src = "images/48.png" alt = "output image before Cleaning" width = "700" height="200">
+        <img src = "images/48.png" alt = "output image before Cleaning" width = "700" height="100">
         <li>Removing entries with missing taglines</li>
         <li>Dropping movies with null or empty overviews, genres, or poster paths</li>
         <img src = "images/50.png" alt = "output image before Cleaning" width = "500" height="333">
@@ -88,7 +87,7 @@
       <p>
         After filtering, the final dataset size was reduced to approximately <strong>21,554</strong> high-quality samples with complete overview, tagline, genre labels, and poster paths.
       </p>
-      <img src = "images/51.png" alt = "output image before Cleaning" width = "550" height="350">
+      <img src = "images/51.png" alt = "output image before Cleaning" width = "600" height="200">
       
       <h3>Genre Label Refinement</h3>
       <p>
@@ -183,7 +182,7 @@
         <li><strong>Final label matrix shape:</strong> <code>(21554, 18)</code></li>
         <li><strong>Number of genres encoded:</strong> 18 (before final genre merging and consolidation into 12 classes)</li>
         <li><strong>Final dataset used:</strong> <code>tmdb_cleaned_final.csv</code></li>
-        <img src = "images/5.png" alt = "output image before Cleaning" width = "500" height="333">
+        <img src = "images/5.png" alt = "output image before Cleaning" width = "700" height="333">
       </ul>
       
       <p>
@@ -207,10 +206,10 @@
         <li><strong>Metadata:</strong> Clean overview + tagline, valid poster, and genre list</li>
         <li><strong>Poster Storage:</strong> ~21k resized 224x224 .jpg images in posters/ folder</li>
       </ul>
-      </div>
+      
     </section>
     
-    <section id="text-model" class="tab-content section-bg-2">
+    <section id="text-model" class="tab-content">
       <h2>Text-Based Movie Genre Classification</h2>
     
       <p><strong>Objective:</strong> Build a robust multi-label classifier that predicts movie genres based solely on the overview text field, using advanced NLP methods.</p>
@@ -339,7 +338,7 @@
       </ul>
     </section>
    
-    <section id="fusion-model" class="tab-content section-bg-3">
+    <section id="fusion-model" class="tab-content">
         <h2>Fusion-Based Movie Genre Classification</h2>
       
         <p><strong>Objective:</strong> To improve genre prediction performance by integrating both text (overview + tagline) and image (poster) data into a single multimodal model.</p>
@@ -533,7 +532,7 @@
         </p>
       </section>
 
-      <section id="comparison-future" class="tab-content section-bg-4">
+      <section id="comparison-future" class="tab-content">
         <h2>Comparison & Future Work</h2>
       
         <h3>Model Comparison</h3>
@@ -570,7 +569,7 @@
         </ul>
       </section>
 
-      <section id="reproducibility" class="tab-content section-bg-5">
+      <section id="reproducibility" class="tab-content">
         <h2>Reproducibility & Instructions</h2>
         <p><strong>GitHub Repository:</strong> 
           <a href="https://github.com/adullagayathri/multimodal-movie-genre-prediction.git" target="_blank">
@@ -604,7 +603,7 @@
         </ol>
         </section>
 
-        <section id="references" class="tab-content section-bg-6">
+        <section id="references" class="tab-content">
           <h2>References</h2>
           <ul>
             <li>Devlin et al. (2019). <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</em>. <a href="https://arxiv.org/abs/1810.04805">[Link]</a></li>
@@ -614,7 +613,7 @@
             <li>Zhang & Zhou (2014). <em>A review on multi-label learning algorithms</em>. <a href="https://ieeexplore.ieee.org/document/6586579">[Link]</a></li>
           </ul>
         </section>
-        <section id="team" class="tab-content section-bg-7">
+        <section id="team" class="tab-content">
           <h2>Team Contributions</h2>
           <ul>
             <li><strong>Gayathri Adulla:</strong> Led dataset preparation, exploratory analysis, and full development of the text-based model (LSTM, GRU, DistilBERT).</li>

@@ -2,9 +2,10 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f9f9f9;
+  background-color: #000000; 
   color: #333;
 }
+
 
 header {
   background-color: #cdb4db; 
@@ -52,7 +53,7 @@ main {
   max-width: 900px;
   margin: 2rem auto;
   padding: 1rem;
-  background: white;
+  background: white; 
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
@@ -93,7 +94,7 @@ footer {
   opacity: 1;
 }
 
-/* Image comparison section */
+
 .before-after {
   display: flex;
   align-items: center;
@@ -130,53 +131,6 @@ footer {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-
-.section-bg-1 {
-  background-image: url('images/81.jpg');
-}
-.section-bg-2 {
-  background-image: url('images/82.jpg');
-}
-.section-bg-3 {
-  background-image: url('images/83.jpg');
-}
-.section-bg-4 {
-  background-image: url('images/84.jpg');
-}
-.section-bg-5 {
-  background-image: url('images/85.jpg');
-}
-.section-bg-6 {
-  background-image: url('images/86.jpg');
-}
-.section-bg-7 {
-  background-image: url('images/87.jpg');
-}
-
-.section-bg-1,
-.section-bg-2,
-.section-bg-3,
-.section-bg-4,
-.section-bg-5,
-.section-bg-6,
-.section-bg-7 {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  padding: 3rem 0;
-}
-
-.section-inner {
-  background-color: white;
-  max-width: 900px;
-  margin: auto;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  position: relative;
-  z-index: 1;
-}
 
 
 
