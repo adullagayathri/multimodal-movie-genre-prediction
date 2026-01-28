@@ -28,16 +28,16 @@ The goal is to improve genre prediction performance by integrating complementary
 ---
 
 ##  Repository Structure
-├── data/
-│ └── tmdb_cleaned_final.csv <- Dataset used for training and evaluation
-├── images/ <- Example plots/posters for documentation
-├── fusion_code.ipynb <- Model training & fusion implementation
-├── fusion_data_cleaning.ipynb <- Data preprocessing notebooks
-├── data_text_model.ipynb <- Text-only model experiments
-├── fusion_inference_script.ipynb <- Inference workflow and prediction examples
-├── index.html <- Hosted demo web UI
-├── styles.css <- UI styling for demo
-└── README.md
+- ├── data/
+- │ └── tmdb_cleaned_final.csv <- Dataset used for training and evaluation
+- ├── images/ <- Example plots/posters for documentation
+- ├── fusion_code.ipynb <- Model training & fusion implementation
+- ├── fusion_data_cleaning.ipynb <- Data preprocessing notebooks
+- ├── data_text_model.ipynb <- Text-only model experiments
+- ├── fusion_inference_script.ipynb <- Inference workflow and prediction examples
+- ├── index.html <- Hosted demo web UI
+- ├── styles.css <- UI styling for demo
+- └── README.md
 
 ---
 
